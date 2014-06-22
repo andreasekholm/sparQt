@@ -1,53 +1,79 @@
 #!/usr/bin/python
-# -*- coding: cp865 -*-
 
 """
-Jun 17: Fonster skapas.
-Jun 18: Knapp tillagd. Knappen stanger fonstret. Tooltip funkar.
-Jun 19: Fuck fonster! Edit: Works!
+Jun 20: Borjar fran scratch ;_;
+Jun 22: Enklaste, daligaste textredigeraren nagonsin! DONE!
 """
 
 import sys
+import os
 from PyQt4 import QtGui, QtCore
 
 
-class Window(QtGui.QWidget):
+class UAEH(QtGui.QMainWindow):
 	def __init__(self):
-		super(Window, self).__init__()
-
+		super(UAEH, self).__init__()
 		self.initUI()
 
-		# bestäm typsnitt för programmet
 	def initUI(self):
+
+		self.text = QtGui.QTextEdit(self)
+		self.setCentralWidget(self.text)
+
 		QtGui.QToolTip.setFont(QtGui.QFont('Ubuntu', 10))
 
-		# self.setToolTip() - tooltip i hela fönstret @_@
+		newAction = QtGui.QAction('New', self)
+		newAction.setShortcut('Ctrl+N')
+		newAction.setStatusTip('You can\'t have too many text files ;)')
+		newAction.triggered.connect(self.newFile)
 
-		btn = QtGui.QPushButton('Kuddfluffaren!', self)
-		btn.setToolTip('Denna knapp <u>stänger</u> fönstret!')
-		btn.clicked.connect(QtCore.QCoreApplication.instance().quit)
-		btn.resize(btn.sizeHint())
-		btn.move(300, 100)
+		saveAction = QtGui.QAction('Save', self)
+		saveAction.setShortcut('Ctrl+S')
+		saveAction.setStatusTip('Saaaaave meeeee')
+		saveAction.triggered.connect(self.saveFile)
 
-		# sätt fönsterstorlek
-		self.setGeometry(300, 300, 450, 150)
-		self.setWindowTitle('Ulf Window')
-		self.setWindowIcon(QtGui.QIcon('web.png'))
+		openAction = QtGui.QAction('Open', self)
+		openAction.setShortcut('Ctrl+O')
+		openAction.setStatusTip('Pick a file to edit')
+		openAction.triggered.connect(self.openFile)
 
+		closeAction = QtGui.QAction('Close', self)
+		closeAction.setShortcut('Ctrl+Q')
+		closeAction.setStatusTip('Bye bye!')
+		closeAction.triggered.connect(self.close)
+
+		menubar = self.menuBar()
+		fileMenu = menubar.addMenu('&File')
+		fileMenu.addAction(newAction)
+		fileMenu.addAction(openAction)
+		fileMenu.addAction(saveAction)
+		fileMenu.addAction(closeAction)
+
+		self.setGeometry(300, 300, 300, 300)
+		self.setWindowTitle('Wolf Howl Edit')
 		self.show()
 
-		# skapar en dialog om du verkligen vill stänga fönstret
-	def closeEvent(self, event):
-		reply = QtGui.QMessageBox.question(self, 'Message', "Are you quitting?", 
-			QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, QtGui.QMessageBox.No)
-		if reply == QtGui.QMessageBox.Yes:
-			event.accept()
-		else:
-			event.ignore()
+	def newFile(self):
+		self.text.clear()
+
+	def saveFile(self):
+		filename = QtGui.QFileDialog.getSaveFileName(self, 'Save file', os.getenv('HOME'))
+		f = open(filename, 'w')
+		filedata = self.text.toPlainText()
+		f.write(filedata)
+		f.close()
+	
+	def openFile(self):
+		filename = QtGui.QFileDialog.getOpenFileName(self, 'Open File', os.getenv('HOME'))
+		f = open(filename, 'r')
+		filedata = f.read()
+		self.text.setText(filedata)
+		f.close()
+
 
 def main():
 	app = QtGui.QApplication(sys.argv)
-	ex = Window()
+	ulf = UAEH()
 	sys.exit(app.exec_())
 
 if __name__ == '__main__':
