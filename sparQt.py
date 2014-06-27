@@ -1,8 +1,11 @@
 #!/usr/bin/python
+# -*- encoding: utf-8 -*-
 
 """
-Jun 20: Borjar fran scratch ;_;
-Jun 22: Enklaste, daligaste textredigeraren nagonsin! DONE!
+Jun 20: Börjar från scratch ;_;
+Jun 22: Enklaste, dåligaste textredigeraren någonsin! DONE!
+
+TODO: Lägg till en QToolBar, setToolTip funkar ej i menyer
 """
 
 import sys
@@ -22,25 +25,31 @@ class UAEH(QtGui.QMainWindow):
 
 		QtGui.QToolTip.setFont(QtGui.QFont('Ubuntu', 10))
 
-		newAction = QtGui.QAction('New', self)
+		newAction = QtGui.QAction(QtGui.QIcon('new.png'), 'New', self)
 		newAction.setShortcut('Ctrl+N')
-		newAction.setStatusTip('You can\'t have too many text files ;)')
+		newAction.setToolTip('You can\'t have too many text files ;)')
 		newAction.triggered.connect(self.newFile)
 
-		saveAction = QtGui.QAction('Save', self)
+		saveAction = QtGui.QAction(QtGui.QIcon('save.png'), 'Save', self)
 		saveAction.setShortcut('Ctrl+S')
-		saveAction.setStatusTip('Saaaaave meeeee')
+		saveAction.setToolTip('Saaaaave meeeee')
 		saveAction.triggered.connect(self.saveFile)
 
-		openAction = QtGui.QAction('Open', self)
+		openAction = QtGui.QAction(QtGui.QIcon('open.png'), 'Open', self)
 		openAction.setShortcut('Ctrl+O')
-		openAction.setStatusTip('Pick a file to edit')
+		openAction.setToolTip('Pick a file to edit')
 		openAction.triggered.connect(self.openFile)
 
-		closeAction = QtGui.QAction('Close', self)
+		closeAction = QtGui.QAction(QtGui.QIcon('close.png'), 'Close', self)
 		closeAction.setShortcut('Ctrl+Q')
-		closeAction.setStatusTip('Bye bye!')
+		closeAction.setToolTip('Bye bye!')
 		closeAction.triggered.connect(self.close)
+
+		self.toolbar = self.addToolBar('O HAI!')
+		self.toolbar.addAction(newAction)
+		self.toolbar.addAction(openAction)
+		self.toolbar.addAction(saveAction)
+		self.toolbar.addAction(closeAction)
 
 		menubar = self.menuBar()
 		fileMenu = menubar.addMenu('&File')
@@ -49,7 +58,7 @@ class UAEH(QtGui.QMainWindow):
 		fileMenu.addAction(saveAction)
 		fileMenu.addAction(closeAction)
 
-		self.setGeometry(300, 300, 300, 300)
+		self.setGeometry(300, 300, 800, 640)
 		self.setWindowTitle('Wolf Howl Edit')
 		self.show()
 
@@ -60,6 +69,8 @@ class UAEH(QtGui.QMainWindow):
 		filename = QtGui.QFileDialog.getSaveFileName(self, 'Save file', os.getenv('HOME'))
 		f = open(filename, 'w')
 		filedata = self.text.toPlainText()
+		if filedata is empty:
+			errorbox = QMessageBox.critical("Critical", "Please enter text!")
 		f.write(filedata)
 		f.close()
 	
